@@ -24,7 +24,7 @@ class MinistryFunction extends Model
 
     public function users(): BelongsToMany 
     {
-        return $this->belongsToMany(User::class, 'user_functions')
+        return $this->belongsToMany(User::class, 'user_functions', 'function_id', 'user_id')
         ->withPivot('group_id', 'active')
         ->withTimestamps();
     }

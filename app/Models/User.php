@@ -72,7 +72,7 @@ class User extends Authenticatable
 
     public function functions(): BelongsToMany 
     {
-        return $this->belongsToMany(MinistryFunction::class, 'user_functions')
+        return $this->belongsToMany(MinistryFunction::class, 'user_functions', 'user_id', 'function_id')
         ->withPivot('group_id', 'active')
         ->withTimestamps();
     }

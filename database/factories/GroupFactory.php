@@ -31,7 +31,7 @@ class GroupFactory extends Factory
 
         return [
             'name' => $name,
-            'slug' => \Illuminate\Support\Str::slug($name . ' ' . fake()->numberBetween(1, 100)),
+            'slug' => \Illuminate\Support\Str::slug($name . ' ' . fake()->unique()->numberBetween(1, 9999)),
             'description' => fake()->sentence(6),
             'active' => fake()->boolean(90),
             'meeting_days' => fake()->randomElement([

@@ -21,7 +21,7 @@ class Organization extends Model
         'active' => 'boolean',
     ];
 
-    public function users():HasMany
+    public function users(): HasMany
     {
         return $this->hasMany(User::class);
     }
@@ -29,5 +29,10 @@ class Organization extends Model
     public function ministries(): HasMany
     {
         return $this->hasMany(Ministry::class);
+    }
+
+    public function schedules(): HasMany
+    {
+        return $this->hasMany(Schedule::class);
     }
 }

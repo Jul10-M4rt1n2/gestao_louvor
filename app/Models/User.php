@@ -8,6 +8,7 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class User extends Authenticatable
 {
@@ -53,32 +54,47 @@ class User extends Authenticatable
         ];
     }
 
-    public function organization(): BelongsTo 
+    public function organization(): BelongsTo
     {
         return $this->belongsTo(Organization::class);
     }
 
-    public function groups(): BelongsToMany 
+    public function groups(): BelongsToMany
     {
         return $this->belongsToMany(Group::class, 'user_groups')
-        ->withPivot('joined_at', 'active')
-        ->withTimestamps();
+            ->withPivot('joined_at', 'active')
+            ->withTimestamps();
     }
 
-    public function activeGroups(): BelongsToMany 
+    public function activeGroups(): BelongsToMany
     {
         return $this->groups()->wherePivot('active', true);
     }
 
-    public function functions(): BelongsToMany 
+    public function functions(): BelongsToMany
     {
         return $this->belongsToMany(MinistryFunction::class, 'user_functions', 'user_id', 'function_id')
-        ->withPivot('group_id', 'active')
-        ->withTimestamps();
+            ->withPivot('group_id', 'active')
+            ->withTimestamps();
     }
 
-    public function activeFunctions(): BelongsToMany 
+    public function activeFunctions(): BelongsToMany
     {
         return $this->functions()->wherePivot('active', true);
+    }
+
+    public function scheduleParticipations(): HasMany
+    {
+        return $this->hasMany(ScheduleParticipant::class);
+    }
+
+    public function confirmedSchedules(): HasMany
+    {
+        return $this->scheduleParticipations()->confirmed();
+    }
+
+    public function pendingSchedules(): HasMany
+    {
+        return $this->scheduleParticipations()->pending();
     }
 }

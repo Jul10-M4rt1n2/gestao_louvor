@@ -19,7 +19,7 @@ return new class extends Migration
             $table->integer('order')->default(0); // Ordem na escala
             $table->text('notes')->nullable();
             $table->timestamps();
-            
+
             $table->unique(['schedule_id', 'music_id']);
             $table->index(['schedule_id', 'order']);
         });

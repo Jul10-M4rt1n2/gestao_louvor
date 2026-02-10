@@ -23,7 +23,7 @@ return new class extends Migration
             $table->foreignId('organization_id')->constrained()->cascadeOnDelete();
             $table->rememberToken();
             $table->timestamps();
-            
+
             // Índices para performance
             $table->index(['organization_id', 'active']);
             $table->index('email');

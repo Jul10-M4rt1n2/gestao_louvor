@@ -2,8 +2,8 @@
 
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
-use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
@@ -28,12 +28,12 @@ return new class extends Migration
             $table->foreignId('organization_id')->constrained()->cascadeOnDelete();
             $table->foreignId('created_by')->constrained('users')->cascadeOnDelete();
             $table->timestamps();
-            
+
             $table->index(['organization_id', 'active']);
             $table->index(['artist']);
             $table->index(['genre']);
             $table->index(['original_key']);
-            
+
             // Full-text search only for MySQL/MariaDB
             if (DB::getDriverName() === 'mysql') {
                 $table->fullText(['title', 'artist', 'genre']);

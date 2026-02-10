@@ -78,7 +78,7 @@ enum Key: string
      */
     public function isMajor(): bool
     {
-        return !str_ends_with($this->value, 'm');
+        return ! str_ends_with($this->value, 'm');
     }
 
     /**
@@ -95,7 +95,7 @@ enum Key: string
     public function chromaticPosition(): int
     {
         $root = $this->getRootNote();
-        
+
         return match ($root) {
             'C' => 0,
             'C#', 'Db' => 1,

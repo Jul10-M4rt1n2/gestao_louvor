@@ -21,8 +21,8 @@ return new class extends Migration
 
             $table->unique(['user_id', 'group_id']); // Um usuário não pode estar no mesmo grupo mais de uma vez
 
-            $table->index(['group_id', 'active']);// Para consultas rápidas de membros ativos por grupo
-            $table->index(['user_id', 'active']);// Para consultas rápidas dos grupos ativos de um usuário
+            $table->index(['group_id', 'active']); // Para consultas rápidas de membros ativos por grupo
+            $table->index(['user_id', 'active']); // Para consultas rápidas dos grupos ativos de um usuário
         });
     }
 

@@ -16,7 +16,7 @@ class OrganizationFactory extends Factory
      */
     public function definition(): array
     {
-        $name = fake()->company() . ' ' . fake()->randomElement(['Igreja', 'Ministério', 'Comunidade']);
+        $name = fake()->company().' '.fake()->randomElement(['Igreja', 'Ministério', 'Comunidade']);
 
         return [
             'name' => $name,

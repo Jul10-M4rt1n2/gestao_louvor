@@ -2,9 +2,9 @@
 
 namespace Tests\Unit\Services;
 
-use PHPUnit\Framework\TestCase;
-use App\Services\Music\ChordTranspositionService;
 use App\Domain\Music\Enums\Key;
+use App\Services\Music\ChordTranspositionService;
+use PHPUnit\Framework\TestCase;
 
 class ChordTranspositionServiceTest extends TestCase
 {
@@ -13,7 +13,7 @@ class ChordTranspositionServiceTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
-        $this->service = new ChordTranspositionService();
+        $this->service = new ChordTranspositionService;
     }
 
     public function test_transpose_major_chord_up(): void
@@ -78,30 +78,30 @@ class ChordTranspositionServiceTest extends TestCase
 
     public function test_transpose_text_with_multiple_chords(): void
     {
-        $text = "C Am F G";
+        $text = 'C Am F G';
         $result = $this->service->transposeText($text, 2, true);
-        $this->assertEquals("D Bm G A", $result);
+        $this->assertEquals('D Bm G A', $result);
     }
 
     public function test_transpose_text_preserves_non_chords(): void
     {
-        $text = "Verso 1: C Am F G";
+        $text = 'Verso 1: C Am F G';
         $result = $this->service->transposeText($text, 2, true);
-        $this->assertEquals("Verso 1: D Bm G A", $result);
+        $this->assertEquals('Verso 1: D Bm G A', $result);
     }
 
     public function test_transpose_by_key(): void
     {
-        $text = "C Am Dm G";
+        $text = 'C Am Dm G';
         $result = $this->service->transposeByKey($text, Key::C, Key::D);
-        $this->assertEquals("D Bm Em A", $result);
+        $this->assertEquals('D Bm Em A', $result);
     }
 
     public function test_detect_chords(): void
     {
-        $text = "C Am F G C Am";
+        $text = 'C Am F G C Am';
         $chords = $this->service->detectChords($text);
-        
+
         $this->assertCount(4, $chords);
         $this->assertContains('C', $chords);
         $this->assertContains('Am', $chords);
@@ -113,28 +113,28 @@ class ChordTranspositionServiceTest extends TestCase
     {
         $interval = $this->service->calculateInterval('C', 'G');
         $this->assertEquals(7, $interval);
-        
+
         $interval = $this->service->calculateInterval('C', 'F');
         $this->assertEquals(5, $interval);
     }
 
     public function test_has_chords_returns_true(): void
     {
-        $text = "This is a C major chord";
+        $text = 'This is a C major chord';
         $this->assertTrue($this->service->hasChords($text));
     }
 
     public function test_has_chords_returns_false(): void
     {
-        $text = "This is just text without chords";
+        $text = 'This is just text without chords';
         $this->assertFalse($this->service->hasChords($text));
     }
 
     public function test_suggest_keys(): void
     {
-        $text = "C Am Dm G C Am F G C";
+        $text = 'C Am Dm G C Am F G C';
         $keys = $this->service->suggestKeys($text);
-        
+
         $this->assertNotEmpty($keys);
         $this->assertEquals('C', $keys[0]); // C appears most frequently
     }
@@ -143,7 +143,7 @@ class ChordTranspositionServiceTest extends TestCase
     {
         $result = $this->service->transposeChord('C', 12, true);
         $this->assertEquals('C', $result);
-        
+
         $result = $this->service->transposeChord('G', 5, true);
         $this->assertEquals('C', $result);
     }
@@ -166,4 +166,3 @@ class ChordTranspositionServiceTest extends TestCase
         $this->assertEquals('Eadd9', $result);
     }
 }
-

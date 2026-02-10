@@ -24,21 +24,21 @@ class GroupFactory extends Factory
             'Audio Principal',
             'Audio Alternativo',
             'Transmissao Live',
-            'Intercessao Manha'
+            'Intercessao Manha',
         ];
 
         $name = fake()->randomElement($groupTypes);
 
         return [
             'name' => $name,
-            'slug' => \Illuminate\Support\Str::slug($name . ' ' . fake()->unique()->numberBetween(1, 9999)),
+            'slug' => \Illuminate\Support\Str::slug($name.' '.fake()->unique()->numberBetween(1, 9999)),
             'description' => fake()->sentence(6),
             'active' => fake()->boolean(90),
             'meeting_days' => fake()->randomElement([
                 [0], // Domingo
                 [0, 3], // Domingo e Quarta
                 [6],  // Sábado
-                [0, 6] // Domingo e Sábado
+                [0, 6], // Domingo e Sábado
             ]),
             'meeting_time' => fake()->time('H:i:s', '20:00:00'),
             'ministry_id' => \App\Models\Ministry::factory(),

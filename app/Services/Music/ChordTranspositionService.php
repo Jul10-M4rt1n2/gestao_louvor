@@ -6,7 +6,7 @@ use App\Domain\Music\Enums\Key;
 
 /**
  * Service for transposing musical chords
- * 
+ *
  * This service implements a complete chord transposition algorithm that:
  * - Transposes chords to any key
  * - Handles all chord types (major, minor, 7, maj7, m7, dim, aug, sus2, sus4, etc.)
@@ -20,14 +20,14 @@ class ChordTranspositionService
      * Chromatic scale (sharps)
      */
     private const CHROMATIC_SCALE_SHARPS = [
-        'C', 'C#', 'D', 'D#', 'E', 'F', 'F#', 'G', 'G#', 'A', 'A#', 'B'
+        'C', 'C#', 'D', 'D#', 'E', 'F', 'F#', 'G', 'G#', 'A', 'A#', 'B',
     ];
 
     /**
      * Chromatic scale (flats)
      */
     private const CHROMATIC_SCALE_FLATS = [
-        'C', 'Db', 'D', 'Eb', 'E', 'F', 'Gb', 'G', 'Ab', 'A', 'Bb', 'B'
+        'C', 'Db', 'D', 'Eb', 'E', 'F', 'Gb', 'G', 'Ab', 'A', 'Bb', 'B',
     ];
 
     /**
@@ -39,15 +39,15 @@ class ChordTranspositionService
     /**
      * Transpose a single chord by the specified number of semitones
      *
-     * @param string $chord The chord to transpose (e.g., "Cmaj7", "D#m", "G/B")
-     * @param int $semitones Number of semitones to transpose (positive or negative)
-     * @param bool $useSharps Whether to use sharps (true) or flats (false) for accidentals
+     * @param  string  $chord  The chord to transpose (e.g., "Cmaj7", "D#m", "G/B")
+     * @param  int  $semitones  Number of semitones to transpose (positive or negative)
+     * @param  bool  $useSharps  Whether to use sharps (true) or flats (false) for accidentals
      * @return string The transposed chord
      */
     public function transposeChord(string $chord, int $semitones, bool $useSharps = true): string
     {
         // Parse the chord using regex
-        if (!preg_match(self::CHORD_PATTERN, $chord, $matches)) {
+        if (! preg_match(self::CHORD_PATTERN, $chord, $matches)) {
             return $chord; // Return unchanged if not a valid chord
         }
 
@@ -63,10 +63,10 @@ class ChordTranspositionService
         $newBass = $bass ? $this->transposeNote($bass, $semitones, $useSharps) : null;
 
         // Reconstruct the chord
-        $transposedChord = $newRoot . $quality . $extension;
-        
+        $transposedChord = $newRoot.$quality.$extension;
+
         if ($newBass) {
-            $transposedChord .= '/' . $newBass;
+            $transposedChord .= '/'.$newBass;
         }
 
         return $transposedChord;
@@ -75,9 +75,9 @@ class ChordTranspositionService
     /**
      * Transpose a single note by the specified number of semitones
      *
-     * @param string $note The note to transpose (C, D#, Eb, etc.)
-     * @param int $semitones Number of semitones to transpose
-     * @param bool $useSharps Whether to use sharps or flats
+     * @param  string  $note  The note to transpose (C, D#, Eb, etc.)
+     * @param  int  $semitones  Number of semitones to transpose
+     * @param  bool  $useSharps  Whether to use sharps or flats
      * @return string The transposed note
      */
     private function transposeNote(string $note, int $semitones, bool $useSharps): string
@@ -99,7 +99,7 @@ class ChordTranspositionService
     /**
      * Get the position of a note in the chromatic scale (0-11)
      *
-     * @param string $note The note (C, C#, Db, etc.)
+     * @param  string  $note  The note (C, C#, Db, etc.)
      * @return int Position (0-11)
      */
     private function getNotePosition(string $note): int
@@ -121,9 +121,9 @@ class ChordTranspositionService
     /**
      * Transpose all chords in a text
      *
-     * @param string $text Text containing chords (e.g., lyrics with chords)
-     * @param int $semitones Number of semitones to transpose
-     * @param bool $useSharps Whether to use sharps or flats
+     * @param  string  $text  Text containing chords (e.g., lyrics with chords)
+     * @param  int  $semitones  Number of semitones to transpose
+     * @param  bool  $useSharps  Whether to use sharps or flats
      * @return string Text with transposed chords
      */
     public function transposeText(string $text, int $semitones, bool $useSharps = true): string
@@ -140,9 +140,9 @@ class ChordTranspositionService
     /**
      * Transpose from one key to another
      *
-     * @param string $text Text containing chords
-     * @param Key|string $fromKey Original key
-     * @param Key|string $toKey Target key
+     * @param  string  $text  Text containing chords
+     * @param  Key|string  $fromKey  Original key
+     * @param  Key|string  $toKey  Target key
      * @return string Text with transposed chords
      */
     public function transposeByKey(string $text, Key|string $fromKey, Key|string $toKey): string
@@ -155,7 +155,7 @@ class ChordTranspositionService
         $semitones = $to->chromaticPosition() - $from->chromaticPosition();
 
         // Determine if we should use sharps or flats based on target key
-        $useSharps = !str_contains($to->value, 'b');
+        $useSharps = ! str_contains($to->value, 'b');
 
         return $this->transposeText($text, $semitones, $useSharps);
     }
@@ -163,21 +163,21 @@ class ChordTranspositionService
     /**
      * Detect all unique chords in a text
      *
-     * @param string $text Text containing chords
+     * @param  string  $text  Text containing chords
      * @return array<string> Array of unique chords found
      */
     public function detectChords(string $text): array
     {
         preg_match_all(self::CHORD_PATTERN, $text, $matches);
-        
+
         return array_unique($matches[0]);
     }
 
     /**
      * Calculate the interval (in semitones) between two chords
      *
-     * @param string $fromChord Starting chord
-     * @param string $toChord Target chord
+     * @param  string  $fromChord  Starting chord
+     * @param  string  $toChord  Target chord
      * @return int Number of semitones
      */
     public function calculateInterval(string $fromChord, string $toChord): int
@@ -186,7 +186,7 @@ class ChordTranspositionService
         preg_match('/^([A-G][#b]?)/', $fromChord, $fromMatches);
         preg_match('/^([A-G][#b]?)/', $toChord, $toMatches);
 
-        if (!isset($fromMatches[1]) || !isset($toMatches[1])) {
+        if (! isset($fromMatches[1]) || ! isset($toMatches[1])) {
             return 0;
         }
 
@@ -194,7 +194,7 @@ class ChordTranspositionService
         $toPosition = $this->getNotePosition($toMatches[1]);
 
         $interval = $toPosition - $fromPosition;
-        
+
         // Normalize to 0-11 range
         if ($interval < 0) {
             $interval += 12;
@@ -206,7 +206,7 @@ class ChordTranspositionService
     /**
      * Check if a string contains valid chords
      *
-     * @param string $text Text to check
+     * @param  string  $text  Text to check
      * @return bool True if text contains chords
      */
     public function hasChords(string $text): bool
@@ -218,13 +218,13 @@ class ChordTranspositionService
      * Get suggested keys for a piece based on detected chords
      * Analyzes chord progressions to suggest likely keys
      *
-     * @param string $text Text containing chords
+     * @param  string  $text  Text containing chords
      * @return array<string> Array of suggested keys (most likely first)
      */
     public function suggestKeys(string $text): array
     {
         $chords = $this->detectChords($text);
-        
+
         if (empty($chords)) {
             return [];
         }

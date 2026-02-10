@@ -21,7 +21,7 @@ return new class extends Migration
             $table->foreignId('organization_id')->constrained()->cascadeOnDelete();
             $table->timestamp('read_at')->nullable();
             $table->timestamps();
-            
+
             $table->index(['group_id', 'created_at']);
             $table->index(['organization_id', 'created_at']);
             $table->index(['user_id']);

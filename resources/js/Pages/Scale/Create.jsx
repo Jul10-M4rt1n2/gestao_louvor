@@ -15,7 +15,7 @@ export default function Create({ groups }) {
 
     const handleSubmit = (e) => {
         e.preventDefault();
-        post('/schedules');
+        post('/scales');
     };
 
     return (
@@ -27,7 +27,7 @@ export default function Create({ groups }) {
                     {/* Header */}
                     <div className="mb-6">
                         <Link
-                            href="/schedules"
+                            href="/scales"
                             className="text-sm text-indigo-600 hover:text-indigo-700 flex items-center mb-2"
                         >
                             <svg className="w-4 h-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -146,7 +146,7 @@ export default function Create({ groups }) {
                                     type="time"
                                     id="duration"
                                     value={data.duration}
-                                    onChange={(e) => setData('duration', e.target.value + ':00')}
+                                    onChange={(e) => setData('duration', e.target.value)}
                                     step="3600"
                                     className={`w-full px-3 py-2 border rounded-md focus:ring-indigo-500 focus:border-indigo-500 ${
                                         errors.duration ? 'border-red-500' : 'border-gray-300'
@@ -210,7 +210,7 @@ export default function Create({ groups }) {
                                 {processing ? 'Salvando...' : 'Criar Escala'}
                             </button>
                             <Link
-                                href="/schedules"
+                                href="/scales"
                                 className="px-6 py-2 bg-gray-200 text-gray-700 rounded-md hover:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-gray-500"
                             >
                                 Cancelar

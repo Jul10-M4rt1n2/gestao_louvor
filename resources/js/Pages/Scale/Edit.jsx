@@ -18,11 +18,11 @@ export default function Edit({ schedule, groups }) {
 
     const handleSubmit = (e) => {
         e.preventDefault();
-        put(`/schedules/${schedule.id}`);
+        put(`/scales/${schedule.id}`);
     };
 
     const handleDelete = () => {
-        router.delete(`/schedules/${schedule.id}`, {
+        router.delete(`/scales/${schedule.id}`, {
             onSuccess: () => {
                 setShowDeleteModal(false);
             },
@@ -38,7 +38,7 @@ export default function Edit({ schedule, groups }) {
                     {/* Header */}
                     <div className="mb-6">
                         <Link
-                            href={`/schedules/${schedule.id}`}
+                            href={`/scales/${schedule.id}`}
                             className="text-sm text-indigo-600 hover:text-indigo-700 flex items-center mb-2"
                         >
                             <svg className="w-4 h-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -157,7 +157,7 @@ export default function Edit({ schedule, groups }) {
                                     type="time"
                                     id="duration"
                                     value={data.duration.substring(0, 5)}
-                                    onChange={(e) => setData('duration', e.target.value + ':00')}
+                                    onChange={(e) => setData('duration', e.target.value)}
                                     step="3600"
                                     className={`w-full px-3 py-2 border rounded-md focus:ring-indigo-500 focus:border-indigo-500 ${
                                         errors.duration ? 'border-red-500' : 'border-gray-300'
@@ -223,7 +223,7 @@ export default function Edit({ schedule, groups }) {
                             
                             <div className="flex gap-3">
                                 <Link
-                                    href={`/schedules/${schedule.id}`}
+                                    href={`/scales/${schedule.id}`}
                                     className="px-6 py-2 bg-gray-200 text-gray-700 rounded-md hover:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-gray-500"
                                 >
                                     Cancelar

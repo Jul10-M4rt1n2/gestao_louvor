@@ -20,7 +20,7 @@ export default function Show({ schedule, scheduleMusics, participants, available
     });
 
     const handleDelete = () => {
-        router.delete(`/schedules/${schedule.id}`, {
+        router.delete(`/scales/${schedule.id}`, {
             onSuccess: () => {
                 setShowDeleteModal(false);
             },
@@ -29,7 +29,7 @@ export default function Show({ schedule, scheduleMusics, participants, available
 
     const handleAddMusic = (e) => {
         e.preventDefault();
-        postMusic(`/schedules/${schedule.id}/musics`, {
+        postMusic(`/scales/${schedule.id}/musics`, {
             onSuccess: () => {
                 setShowAddMusicModal(false);
                 resetMusic();
@@ -39,19 +39,19 @@ export default function Show({ schedule, scheduleMusics, participants, available
 
     const handleRemoveMusic = (musicId) => {
         if (confirm('Tem certeza que deseja remover esta música da escala?')) {
-            router.delete(`/schedules/${schedule.id}/musics/${musicId}`);
+            router.delete(`/scales/${schedule.id}/musics/${musicId}`);
         }
     };
 
     const handleReorderMusic = (musicId, direction) => {
-        router.post(`/schedules/${schedule.id}/musics/${musicId}/reorder`, {
+        router.post(`/scales/${schedule.id}/musics/${musicId}/reorder`, {
             direction: direction,
         });
     };
 
     const handleAddParticipant = (e) => {
         e.preventDefault();
-        postParticipant(`/schedules/${schedule.id}/participants`, {
+        postParticipant(`/scales/${schedule.id}/participants`, {
             onSuccess: () => {
                 setShowAddParticipantModal(false);
                 resetParticipant();
@@ -60,14 +60,14 @@ export default function Show({ schedule, scheduleMusics, participants, available
     };
 
     const handleUpdateParticipantStatus = (userId, newStatus) => {
-        router.patch(`/schedules/${schedule.id}/participants/${userId}`, {
+        router.patch(`/scales/${schedule.id}/participants/${userId}`, {
             status: newStatus,
         });
     };
 
     const handleRemoveParticipant = (userId) => {
         if (confirm('Tem certeza que deseja remover este participante da escala?')) {
-            router.delete(`/schedules/${schedule.id}/participants/${userId}`);
+            router.delete(`/scales/${schedule.id}/participants/${userId}`);
         }
     };
 
@@ -110,7 +110,7 @@ export default function Show({ schedule, scheduleMusics, participants, available
                     {/* Header */}
                     <div className="mb-6">
                         <Link
-                            href="/schedules"
+                            href="/scales"
                             className="text-sm text-indigo-600 hover:text-indigo-700 flex items-center mb-2"
                         >
                             <svg className="w-4 h-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -137,7 +137,7 @@ export default function Show({ schedule, scheduleMusics, participants, available
                             </div>
                             <div className="mt-4 flex gap-2 md:mt-0 md:ml-4">
                                 <Link
-                                    href={`/schedules/${schedule.id}/edit`}
+                                    href={`/scales/${schedule.id}/edit`}
                                     className="inline-flex items-center px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50"
                                 >
                                     <svg className="-ml-1 mr-2 h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">

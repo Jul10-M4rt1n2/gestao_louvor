@@ -7,8 +7,8 @@ export default function Create({ groups }) {
         type: 'culto',
         description: '',
         group_id: '',
-        scheduled_date: '',
-        duration: '02:00',
+        scheduled_at: '',
+        duration: '02:00:00',
         location: '',
         status: 'planejada',
     });
@@ -123,19 +123,19 @@ export default function Create({ groups }) {
                         {/* Scheduled Date and Duration */}
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                             <div>
-                                <label htmlFor="scheduled_date" className="block text-sm font-medium text-gray-700 mb-1">
+                                <label htmlFor="scheduled_at" className="block text-sm font-medium text-gray-700 mb-1">
                                     Data e Hora <span className="text-red-500">*</span>
                                 </label>
                                 <input
                                     type="datetime-local"
-                                    id="scheduled_date"
-                                    value={data.scheduled_date}
-                                    onChange={(e) => setData('scheduled_date', e.target.value)}
+                                    id="scheduled_at"
+                                    value={data.scheduled_at}
+                                    onChange={(e) => setData('scheduled_at', e.target.value)}
                                     className={`w-full px-3 py-2 border rounded-md focus:ring-indigo-500 focus:border-indigo-500 ${
-                                        errors.scheduled_date ? 'border-red-500' : 'border-gray-300'
+                                        errors.scheduled_at ? 'border-red-500' : 'border-gray-300'
                                     }`}
                                 />
-                                {errors.scheduled_date && <p className="mt-1 text-sm text-red-600">{errors.scheduled_date}</p>}
+                                {errors.scheduled_at && <p className="mt-1 text-sm text-red-600">{errors.scheduled_at}</p>}
                             </div>
 
                             <div>
@@ -145,8 +145,8 @@ export default function Create({ groups }) {
                                 <input
                                     type="time"
                                     id="duration"
-                                    value={data.duration}
-                                    onChange={(e) => setData('duration', e.target.value)}
+                                    value={data.duration ? data.duration.substring(0, 5) : ''}
+                                    onChange={(e) => setData('duration', e.target.value + ':00')}
                                     step="3600"
                                     className={`w-full px-3 py-2 border rounded-md focus:ring-indigo-500 focus:border-indigo-500 ${
                                         errors.duration ? 'border-red-500' : 'border-gray-300'

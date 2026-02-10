@@ -15,8 +15,8 @@ export default function Index({ schedules, groups, filters }) {
             search, 
             status, 
             group_id: groupId, 
-            date_from: dateFrom, 
-            date_to: dateTo 
+            start_date: dateFrom, 
+            end_date: dateTo 
         }, { preserveState: true });
     };
 

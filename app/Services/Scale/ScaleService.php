@@ -189,13 +189,20 @@ class ScaleService
      */
     public function updateMusic(ScheduleMusic $scheduleMusic, array $data): ScheduleMusic
     {
-        $scheduleMusic->update([
-            'custom_key' => $data['custom_key'] ?? $scheduleMusic->custom_key,
-            'order' => $data['order'] ?? $scheduleMusic->order,
-            'notes' => $data['notes'] ?? $scheduleMusic->notes,
-        ]);
+        DB::beginTransaction();
+        try {
+            $scheduleMusic->update([
+                'custom_key' => $data['custom_key'] ?? $scheduleMusic->custom_key,
+                'order' => $data['order'] ?? $scheduleMusic->order,
+                'notes' => $data['notes'] ?? $scheduleMusic->notes,
+            ]);
 
-        return $scheduleMusic->fresh(['music', 'schedule']);
+            DB::commit();
+            return $scheduleMusic->fresh(['music', 'schedule']);
+        } catch (\Exception $e) {
+            DB::rollBack();
+            throw $e;
+        }
     }
 
     /**
@@ -298,7 +305,15 @@ class ScaleService
      */
     public function removeParticipant(ScheduleParticipant $participant): bool
     {
-        return $participant->delete();
+        DB::beginTransaction();
+        try {
+            $result = $participant->delete();
+            DB::commit();
+            return $result;
+        } catch (\Exception $e) {
+            DB::rollBack();
+            throw $e;
+        }
     }
 
     /**

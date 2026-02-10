@@ -44,8 +44,8 @@ Route::middleware('auth')->group(function () {
     Route::delete('/groups/{group}/members/{userId}', [MemberController::class, 'destroy'])->name('groups.members.destroy');
     
     // Scale routes
-    Route::resource('scales', ScaleController::class);
     Route::get('/scales/week/view', [ScaleController::class, 'week'])->name('scales.week');
+    Route::resource('scales', ScaleController::class);
     Route::post('/scales/{schedule}/music', [ScaleController::class, 'addMusic'])->name('scales.music.add');
     Route::put('/scales/{schedule}/music/{scheduleMusic}', [ScaleController::class, 'updateMusic'])->name('scales.music.update');
     Route::delete('/scales/{schedule}/music/{scheduleMusic}', [ScaleController::class, 'removeMusic'])->name('scales.music.remove');

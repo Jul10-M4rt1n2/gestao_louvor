@@ -21,7 +21,7 @@ class ScaleResource extends JsonResource
             'description' => $this->description,
             'scheduled_at' => $this->scheduled_at?->format('d/m/Y H:i'),
             'scheduled_at_iso' => $this->scheduled_at?->toIso8601String(),
-            'duration' => $this->duration?->format('H:i:s'),
+            'duration' => is_string($this->duration) ? $this->duration : $this->duration?->format('H:i:s'),
             'location' => $this->location,
             'status' => $this->status,
             'status_label' => $this->getStatusLabel(),

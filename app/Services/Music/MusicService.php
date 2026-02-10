@@ -2,6 +2,7 @@
 
 namespace App\Services\Music;
 
+use App\Actions\Music\ParseChordsAction;
 use App\Models\Music;
 use App\Models\User;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
@@ -12,7 +13,9 @@ use Illuminate\Support\Facades\Storage;
 class MusicService
 {
     public function __construct(
-        private readonly ChordTranspositionService $transpositionService
+        private readonly ChordTranspositionService $transpositionService,
+        private readonly FileParserService $fileParserService,
+        private readonly ParseChordsAction $parseChordsAction
     ) {}
 
     /**
@@ -227,12 +230,85 @@ class MusicService
     private function handleFileUpload(Music $music, $file): void
     {
         $extension = $file->getClientOriginalExtension();
-        $filename = time() . '_' . $music->id . '.' . $extension;
+        $filename = time().'_'.$music->id.'.'.$extension;
         $path = $file->storeAs('musics', $filename, 'public');
 
         $music->update([
             'file_path' => $path,
             'file_type' => $extension,
         ]);
+
+        // Try to extract text from file if it's PDF or DOCX
+        $this->extractTextFromFile($music);
+    }
+
+    /**
+     * Extract text from uploaded file and populate lyrics/chords.
+     */
+    public function extractTextFromFile(Music $music): ?array
+    {
+        if (! $music->file_path) {
+            return null;
+        }
+
+        $fullPath = Storage::disk('public')->path($music->file_path);
+
+        if (! file_exists($fullPath)) {
+            return null;
+        }
+
+        // Extract text based on file type
+        $result = $this->fileParserService->extractFromFile($fullPath, $music->file_type);
+
+        if (! $result['success'] || empty($result['text'])) {
+            return $result;
+        }
+
+        // Separate chords and lyrics
+        $separated = $this->fileParserService->separateChordsAndLyrics($result['text']);
+
+        // If music doesn't have lyrics yet, use extracted text
+        if (empty($music->lyrics)) {
+            $music->update([
+                'lyrics' => $separated['combined'],
+            ]);
+        }
+
+        // If music doesn't have chords yet, use extracted chords
+        if (empty($music->chords_text) && ! empty($separated['chords'])) {
+            $music->update([
+                'chords_text' => $separated['chords'],
+            ]);
+        }
+
+        return $result;
+    }
+
+    /**
+     * Detect and extract chords from a music's lyrics.
+     */
+    public function detectChordsInLyrics(Music $music): array
+    {
+        $text = $music->lyrics ?? '';
+
+        if (empty($text)) {
+            return [];
+        }
+
+        return $this->parseChordsAction->extractUniqueChords($text);
+    }
+
+    /**
+     * Suggest a key based on the chords in the music.
+     */
+    public function suggestKey(Music $music): ?string
+    {
+        $text = $music->lyrics ?? $music->chords_text ?? '';
+
+        if (empty($text)) {
+            return null;
+        }
+
+        return $this->parseChordsAction->suggestKey($text);
     }
 }

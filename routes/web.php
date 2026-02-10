@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Auth\AuthController;
+use App\Http\Controllers\Music\MusicController;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
@@ -26,6 +27,11 @@ Route::middleware('auth')->group(function () {
     Route::get('/dashboard', function () {
         return Inertia::render('Dashboard');
     })->name('dashboard');
+    
+    // Music routes
+    Route::resource('music', MusicController::class);
+    Route::get('/music/search', [MusicController::class, 'search'])->name('music.search');
+    Route::post('/music/{music}/transpose', [MusicController::class, 'transpose'])->name('music.transpose');
 });
 
 // Public route

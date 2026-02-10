@@ -146,7 +146,9 @@ class ScaleService
         try {
             // Delete all related participants and musics
             $schedule->participants()->delete();
-            $schedule->musics()->detach();
+            
+            // Delete schedule_musics records properly
+            ScheduleMusic::where('schedule_id', $schedule->id)->delete();
             
             $schedule->delete();
 
@@ -284,20 +286,27 @@ class ScaleService
      */
     public function updateParticipant(ScheduleParticipant $participant, array $data): ScheduleParticipant
     {
-        $updateData = [
-            'function_id' => $data['function_id'] ?? $participant->function_id,
-            'status' => $data['status'] ?? $participant->status,
-            'notes' => $data['notes'] ?? $participant->notes,
-        ];
+        DB::beginTransaction();
+        try {
+            $updateData = [
+                'function_id' => $data['function_id'] ?? $participant->function_id,
+                'status' => $data['status'] ?? $participant->status,
+                'notes' => $data['notes'] ?? $participant->notes,
+            ];
 
-        // Set confirmed_at if status changed to confirmado
-        if (isset($data['status']) && $data['status'] === 'confirmado' && $participant->status !== 'confirmado') {
-            $updateData['confirmed_at'] = now();
+            // Set confirmed_at if status changed to confirmado
+            if (isset($data['status']) && $data['status'] === 'confirmado' && $participant->status !== 'confirmado') {
+                $updateData['confirmed_at'] = now();
+            }
+
+            $participant->update($updateData);
+
+            DB::commit();
+            return $participant->fresh(['user', 'function', 'schedule']);
+        } catch (\Exception $e) {
+            DB::rollBack();
+            throw $e;
         }
-
-        $participant->update($updateData);
-
-        return $participant->fresh(['user', 'function', 'schedule']);
     }
 
     /**

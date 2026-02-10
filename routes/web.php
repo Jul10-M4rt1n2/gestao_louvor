@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Auth\AuthController;
 use App\Http\Controllers\Music\MusicController;
+use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
@@ -32,6 +33,11 @@ Route::middleware('auth')->group(function () {
     Route::resource('music', MusicController::class);
     Route::get('/music/search', [MusicController::class, 'search'])->name('music.search');
     Route::post('/music/{music}/transpose', [MusicController::class, 'transpose'])->name('music.transpose');
+    
+    // Profile routes
+    Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
+    Route::put('/profile', [ProfileController::class, 'update'])->name('profile.update');
+    Route::put('/profile/password', [ProfileController::class, 'updatePassword'])->name('profile.password.update');
 });
 
 // Public route

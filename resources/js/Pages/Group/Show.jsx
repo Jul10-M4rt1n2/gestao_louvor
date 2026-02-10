@@ -4,7 +4,6 @@ import AppLayout from '@/Layouts/AppLayout';
 
 export default function Show({ group, members }) {
     const [showDeleteModal, setShowDeleteModal] = useState(false);
-    const [memberToDelete, setMemberToDelete] = useState(null);
 
     const handleDelete = () => {
         router.delete(`/groups/${group.id}`, {

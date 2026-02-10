@@ -55,7 +55,7 @@ class MusicService
     /**
      * Get all genres for an organization.
      */
-    public function getGenres(int $organizationId): Collection
+    public function getGenres(int $organizationId): \Illuminate\Support\Collection
     {
         return Music::where('organization_id', $organizationId)
             ->where('active', true)

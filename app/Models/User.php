@@ -97,4 +97,16 @@ class User extends Authenticatable
     {
         return $this->scheduleParticipations()->pending();
     }
+
+    public function roles(): BelongsToMany
+    {
+        return $this->belongsToMany(Role::class, 'user_roles')
+            ->withPivot('organization_id')
+            ->withTimestamps();
+    }
+
+    public function createdMusics(): HasMany
+    {
+        return $this->hasMany(Music::class, 'created_by');
+    }
 }

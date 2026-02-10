@@ -48,4 +48,9 @@ class Group extends Model
     {
         return $this->hasMany(Schedule::class);
     }
+
+    public function chatMessages(): HasMany
+    {
+        return $this->hasMany(ChatMessage::class);
+    }
 }

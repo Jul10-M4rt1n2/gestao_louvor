@@ -35,4 +35,14 @@ class Organization extends Model
     {
         return $this->hasMany(Schedule::class);
     }
+
+    public function musics(): HasMany
+    {
+        return $this->hasMany(Music::class);
+    }
+
+    public function chatMessages(): HasMany
+    {
+        return $this->hasMany(ChatMessage::class);
+    }
 }

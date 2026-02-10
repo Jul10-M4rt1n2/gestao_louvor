@@ -5,6 +5,7 @@ use App\Http\Controllers\Group\GroupController;
 use App\Http\Controllers\Group\MemberController;
 use App\Http\Controllers\Music\MusicController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\Scale\ScaleController;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
@@ -41,6 +42,16 @@ Route::middleware('auth')->group(function () {
     Route::post('/groups/{group}/members', [MemberController::class, 'store'])->name('groups.members.store');
     Route::put('/groups/{group}/members/{userId}', [MemberController::class, 'update'])->name('groups.members.update');
     Route::delete('/groups/{group}/members/{userId}', [MemberController::class, 'destroy'])->name('groups.members.destroy');
+    
+    // Scale routes
+    Route::resource('scales', ScaleController::class);
+    Route::get('/scales/week/view', [ScaleController::class, 'week'])->name('scales.week');
+    Route::post('/scales/{schedule}/music', [ScaleController::class, 'addMusic'])->name('scales.music.add');
+    Route::put('/scales/{schedule}/music/{scheduleMusic}', [ScaleController::class, 'updateMusic'])->name('scales.music.update');
+    Route::delete('/scales/{schedule}/music/{scheduleMusic}', [ScaleController::class, 'removeMusic'])->name('scales.music.remove');
+    Route::post('/scales/{schedule}/participants', [ScaleController::class, 'addParticipant'])->name('scales.participants.add');
+    Route::put('/scales/{schedule}/participants/{participant}', [ScaleController::class, 'updateParticipant'])->name('scales.participants.update');
+    Route::delete('/scales/{schedule}/participants/{participant}', [ScaleController::class, 'removeParticipant'])->name('scales.participants.remove');
     
     // Profile routes
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');

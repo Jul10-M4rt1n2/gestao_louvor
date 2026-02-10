@@ -1,6 +1,8 @@
 <?php
 
 use App\Http\Controllers\Auth\AuthController;
+use App\Http\Controllers\Group\GroupController;
+use App\Http\Controllers\Group\MemberController;
 use App\Http\Controllers\Music\MusicController;
 use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
@@ -33,6 +35,12 @@ Route::middleware('auth')->group(function () {
     Route::resource('music', MusicController::class);
     Route::get('/music/search', [MusicController::class, 'search'])->name('music.search');
     Route::post('/music/{music}/transpose', [MusicController::class, 'transpose'])->name('music.transpose');
+    
+    // Group routes
+    Route::resource('groups', GroupController::class);
+    Route::post('/groups/{group}/members', [MemberController::class, 'store'])->name('groups.members.store');
+    Route::put('/groups/{group}/members/{userId}', [MemberController::class, 'update'])->name('groups.members.update');
+    Route::delete('/groups/{group}/members/{userId}', [MemberController::class, 'destroy'])->name('groups.members.destroy');
     
     // Profile routes
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');

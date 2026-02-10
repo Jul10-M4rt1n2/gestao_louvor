@@ -18,6 +18,7 @@ class Group extends Model
         'schedule_frequency',
         'active',
         'ministry_id',
+        'organization_id',
     ];
 
     protected $casts = [
@@ -28,6 +29,11 @@ class Group extends Model
     public function ministry(): BelongsTo
     {
         return $this->belongsTo(Ministry::class);
+    }
+
+    public function organization(): BelongsTo
+    {
+        return $this->belongsTo(Organization::class);
     }
 
     public function users(): BelongsToMany

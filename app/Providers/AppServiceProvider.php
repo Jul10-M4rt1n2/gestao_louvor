@@ -2,7 +2,9 @@
 
 namespace App\Providers;
 
+use App\Models\Group;
 use App\Models\Music;
+use App\Policies\GroupPolicy;
 use App\Policies\MusicPolicy;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\ServiceProvider;
@@ -24,5 +26,6 @@ class AppServiceProvider extends ServiceProvider
     {
         // Register policies
         Gate::policy(Music::class, MusicPolicy::class);
+        Gate::policy(Group::class, GroupPolicy::class);
     }
 }

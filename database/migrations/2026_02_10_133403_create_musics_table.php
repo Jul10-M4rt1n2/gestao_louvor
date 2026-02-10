@@ -3,6 +3,7 @@
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
+use Illuminate\Support\Facades\DB;
 
 return new class extends Migration
 {
@@ -32,7 +33,11 @@ return new class extends Migration
             $table->index(['artist']);
             $table->index(['genre']);
             $table->index(['original_key']);
-            $table->fullText(['title', 'artist', 'genre']); // Full-text search
+            
+            // Full-text search only for MySQL/MariaDB
+            if (DB::getDriverName() === 'mysql') {
+                $table->fullText(['title', 'artist', 'genre']);
+            }
         });
     }
 

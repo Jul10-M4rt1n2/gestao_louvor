@@ -239,10 +239,24 @@ class ScaleService
     {
         DB::beginTransaction();
         try {
+            $cases = [];
+            $ids = [];
+            
             foreach ($musicIds as $index => $musicId) {
-                ScheduleMusic::where('schedule_id', $schedule->id)
-                    ->where('music_id', $musicId)
-                    ->update(['order' => $index + 1]);
+                $cases[] = "WHEN music_id = {$musicId} THEN " . ($index + 1);
+                $ids[] = $musicId;
+            }
+            
+            if (!empty($cases)) {
+                $casesString = implode(' ', $cases);
+                $idsString = implode(',', $ids);
+                
+                DB::update(
+                    "UPDATE schedule_musics 
+                     SET `order` = CASE {$casesString} END 
+                     WHERE schedule_id = ? AND music_id IN ({$idsString})",
+                    [$schedule->id]
+                );
             }
 
             DB::commit();
@@ -330,23 +344,20 @@ class ScaleService
      */
     public function getStatistics(int $organizationId): array
     {
-        $total = Schedule::where('organization_id', $organizationId)->count();
-        $upcoming = Schedule::where('organization_id', $organizationId)
-            ->whereIn('status', ['planejada', 'confirmada'])
-            ->where('scheduled_at', '>=', now())
-            ->count();
-        $completed = Schedule::where('organization_id', $organizationId)
-            ->where('status', 'concluida')
-            ->count();
-        $cancelled = Schedule::where('organization_id', $organizationId)
-            ->where('status', 'cancelada')
-            ->count();
+        $stats = Schedule::where('organization_id', $organizationId)
+            ->selectRaw('
+                COUNT(*) as total,
+                SUM(CASE WHEN status IN ("planejada", "confirmada") AND scheduled_at >= NOW() THEN 1 ELSE 0 END) as upcoming,
+                SUM(CASE WHEN status = "concluida" THEN 1 ELSE 0 END) as completed,
+                SUM(CASE WHEN status = "cancelada" THEN 1 ELSE 0 END) as cancelled
+            ')
+            ->first();
 
         return [
-            'total' => $total,
-            'upcoming' => $upcoming,
-            'completed' => $completed,
-            'cancelled' => $cancelled,
+            'total' => $stats->total ?? 0,
+            'upcoming' => $stats->upcoming ?? 0,
+            'completed' => $stats->completed ?? 0,
+            'cancelled' => $stats->cancelled ?? 0,
         ];
     }
 }

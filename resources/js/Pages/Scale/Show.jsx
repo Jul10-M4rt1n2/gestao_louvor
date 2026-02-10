@@ -29,7 +29,7 @@ export default function Show({ schedule, scheduleMusics, participants, available
 
     const handleAddMusic = (e) => {
         e.preventDefault();
-        postMusic(`/scales/${schedule.id}/musics`, {
+        postMusic(`/scales/${schedule.id}/music`, {
             onSuccess: () => {
                 setShowAddMusicModal(false);
                 resetMusic();
@@ -39,7 +39,7 @@ export default function Show({ schedule, scheduleMusics, participants, available
 
     const handleRemoveMusic = (musicId) => {
         if (confirm('Tem certeza que deseja remover esta música da escala?')) {
-            router.delete(`/scales/${schedule.id}/musics/${musicId}`);
+            router.delete(`/scales/${schedule.id}/music/${musicId}`);
         }
     };
 
@@ -60,7 +60,7 @@ export default function Show({ schedule, scheduleMusics, participants, available
     };
 
     const handleUpdateParticipantStatus = (userId, newStatus) => {
-        router.patch(`/scales/${schedule.id}/participants/${userId}`, {
+        router.put(`/scales/${schedule.id}/participants/${userId}`, {
             status: newStatus,
         });
     };

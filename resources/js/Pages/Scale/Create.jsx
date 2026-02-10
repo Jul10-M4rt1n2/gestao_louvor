@@ -8,7 +8,7 @@ export default function Create({ groups }) {
         description: '',
         group_id: '',
         scheduled_date: '',
-        duration: '02:00:00',
+        duration: '02:00',
         location: '',
         status: 'planejada',
     });

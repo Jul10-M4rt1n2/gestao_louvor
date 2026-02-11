@@ -36,7 +36,7 @@ class GroupController extends Controller
             ->get(['id', 'name']);
 
         return Inertia::render('Group/Index', [
-            'groups' => GroupResource::collection($groups),
+            'groups' => $groups->through(fn($group) => (new GroupResource($group))->resolve()),
             'ministries' => $ministries,
             'filters' => $request->only(['search', 'ministry_id', 'active']),
         ]);
@@ -78,7 +78,7 @@ class GroupController extends Controller
         $members = $this->groupService->getMembers($group);
 
         return Inertia::render('Group/Show', [
-            'group' => new GroupResource($groupData),
+            'group' => (new GroupResource($groupData))->resolve(),
             'members' => $members,
         ]);
     }
@@ -93,7 +93,7 @@ class GroupController extends Controller
             ->get(['id', 'name']);
 
         return Inertia::render('Group/Edit', [
-            'group' => new GroupResource($group->load('ministry')),
+            'group' => (new GroupResource($group->load('ministry')))->resolve(),
             'ministries' => $ministries,
         ]);
     }

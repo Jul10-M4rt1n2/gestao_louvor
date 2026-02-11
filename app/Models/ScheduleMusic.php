@@ -10,6 +10,8 @@ class ScheduleMusic extends Model
 {
     use HasFactory;
 
+    protected $table = 'schedule_musics';
+
     protected $fillable = [
         'schedule_id',
         'music_id',

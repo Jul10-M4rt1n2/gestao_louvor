@@ -203,7 +203,7 @@ class MusicService
     public function getChords(Music $music): array
     {
         $text = $music->lyrics ?? $music->chords_text ?? '';
-        return $this->transpositionService->detectChords($text);
+        return array_values($this->transpositionService->detectChords($text));
     }
 
     /**
@@ -230,7 +230,7 @@ class MusicService
     private function handleFileUpload(Music $music, $file): void
     {
         $extension = $file->getClientOriginalExtension();
-        $filename = time().'_'.$music->id.'.'.$extension;
+        $filename = time() . '_' . $music->id . '.' . $extension;
         $path = $file->storeAs('musics', $filename, 'public');
 
         $music->update([

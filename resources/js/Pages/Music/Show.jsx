@@ -10,8 +10,9 @@ export default function Show({ music, transposed, chords, currentKey }) {
         router.get(`/music/${music.id}`, { key: newKey }, { preserveState: true });
     };
 
-    const displayedLyrics = transposed ? transposed.lyrics : music.lyrics;
-    const displayedChords = transposed ? transposed.chords_text : music.chords_text;
+    const displayedLyrics = transposed ? transposed.lyrics : music?.lyrics;
+    const displayedChords = transposed ? transposed.chords_text : music?.chords_text;
+    const chordsArray = Array.isArray(chords) ? chords : (chords ? Object.values(chords) : []);
 
     return (
         <AppLayout>
@@ -30,7 +31,7 @@ export default function Show({ music, transposed, chords, currentKey }) {
                             </svg>
                             Voltar para lista
                         </Link>
-                        
+
                         <div className="flex items-start justify-between">
                             <div>
                                 <h1 className="text-3xl font-bold text-gray-900">{music.title}</h1>
@@ -190,13 +191,13 @@ export default function Show({ music, transposed, chords, currentKey }) {
                             </div>
 
                             {/* Detected Chords */}
-                            {chords && chords.length > 0 && (
+                            {chordsArray.length > 0 && (
                                 <div className="bg-white shadow rounded-lg p-4">
                                     <h3 className="text-sm font-semibold text-gray-700 uppercase tracking-wider mb-4">
                                         Acordes Detectados
                                     </h3>
                                     <div className="flex flex-wrap gap-2">
-                                        {chords.map((chord, index) => (
+                                        {chordsArray.map((chord, index) => (
                                             <span
                                                 key={index}
                                                 className="inline-flex items-center px-3 py-1 rounded-md text-sm font-medium bg-indigo-100 text-indigo-800"

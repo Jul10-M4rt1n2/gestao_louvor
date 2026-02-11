@@ -50,7 +50,7 @@ class ScaleController extends Controller
         $statistics = $this->scaleService->getStatistics($request->user()->organization_id);
 
         return Inertia::render('Scale/Index', [
-            'schedules' => ScaleResource::collection($schedules),
+            'schedules' => $schedules->through(fn($schedule) => (new ScaleResource($schedule))->resolve()),
             'groups' => $groups,
             'statistics' => $statistics,
             'filters' => $request->only(['search', 'status', 'group_id', 'start_date', 'end_date']),
@@ -98,12 +98,37 @@ class ScaleController extends Controller
     {
         $this->authorize('view', $schedule);
 
-        $schedule->load([
-            'group',
-            'participants.user',
-            'participants.function',
-            'musics'
-        ]);
+        $schedule->load(['group']);
+
+        // Músicas da escala no formato que o frontend espera
+        $scheduleMusics = ScheduleMusic::where('schedule_id', $schedule->id)
+            ->with('music:id,title,artist,original_key')
+            ->orderBy('order')
+            ->get();
+
+        // Participantes com nome da função resolvida
+        $participantsRaw = ScheduleParticipant::where('schedule_id', $schedule->id)
+            ->with(['user:id,name,email'])
+            ->get();
+
+        $functionIds = $participantsRaw->pluck('function_id')->filter()->unique()->values();
+        $functionNames = \App\Models\MinistryFunction::whereIn('id', $functionIds)->pluck('name', 'id');
+
+        $participants = $participantsRaw->map(function ($p) use ($functionNames) {
+            return [
+                'id' => $p->id,
+                'user_id' => $p->user_id,
+                'status' => $p->status,
+                'notes' => $p->notes,
+                'confirmed_at' => $p->confirmed_at?->format('d/m/Y H:i'),
+                'user' => [
+                    'id' => $p->user->id,
+                    'name' => $p->user->name,
+                    'email' => $p->user->email,
+                ],
+                'function' => $p->function_id ? ($functionNames[$p->function_id] ?? null) : null,
+            ];
+        });
 
         $availableMusics = Music::where('organization_id', $request->user()->organization_id)
             ->where('active', true)
@@ -115,7 +140,9 @@ class ScaleController extends Controller
             ->get(['id', 'name', 'email']);
 
         return Inertia::render('Scale/Show', [
-            'schedule' => new ScaleResource($schedule),
+            'schedule' => (new ScaleResource($schedule))->resolve(),
+            'scheduleMusics' => $scheduleMusics,
+            'participants' => $participants,
             'availableMusics' => $availableMusics,
             'availableUsers' => $availableUsers,
         ]);
@@ -134,7 +161,7 @@ class ScaleController extends Controller
             ->get(['id', 'name']);
 
         return Inertia::render('Scale/Edit', [
-            'schedule' => new ScaleResource($schedule->load('group')),
+            'schedule' => (new ScaleResource($schedule->load('group')))->resolve(),
             'groups' => $groups,
         ]);
     }
@@ -174,7 +201,7 @@ class ScaleController extends Controller
     {
         $this->authorize('viewAny', Schedule::class);
 
-        $date = $request->has('date') 
+        $date = $request->has('date')
             ? Carbon::parse($request->input('date'))
             : now();
 
@@ -184,7 +211,7 @@ class ScaleController extends Controller
         );
 
         return Inertia::render('Scale/Week', [
-            'schedules' => ScaleResource::collection($schedules),
+            'schedules' => $schedules->map(fn($schedule) => (new ScaleResource($schedule))->resolve()),
             'currentDate' => $date->format('Y-m-d'),
             'startOfWeek' => $date->copy()->startOfWeek()->format('Y-m-d'),
             'endOfWeek' => $date->copy()->endOfWeek()->format('Y-m-d'),

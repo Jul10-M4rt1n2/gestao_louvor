@@ -37,7 +37,7 @@ class MusicController extends Controller
         $genres = $this->musicService->getGenres($request->user()->organization_id);
 
         return Inertia::render('Music/Index', [
-            'musics' => MusicResource::collection($musics),
+            'musics' => $musics->through(fn($music) => (new MusicResource($music))->resolve()),
             'genres' => $genres,
             'filters' => $request->only(['search', 'genre', 'key']),
         ]);
@@ -92,7 +92,7 @@ class MusicController extends Controller
         $chords = $this->musicService->getChords($music);
 
         return Inertia::render('Music/Show', [
-            'music' => new MusicResource($music->load(['creator', 'organization'])),
+            'music' => (new MusicResource($music->load(['creator', 'organization'])))->resolve(),
             'transposed' => $transposedData,
             'chords' => $chords,
             'currentKey' => $transposedKey,
@@ -107,7 +107,7 @@ class MusicController extends Controller
         $this->authorize('update', $music);
 
         return Inertia::render('Music/Edit', [
-            'music' => new MusicResource($music),
+            'music' => (new MusicResource($music))->resolve(),
         ]);
     }
 
@@ -153,7 +153,7 @@ class MusicController extends Controller
         );
 
         return Inertia::render('Music/Search', [
-            'musics' => MusicResource::collection($musics),
+            'musics' => $musics->through(fn($music) => (new MusicResource($music))->resolve()),
             'query' => $request->input('q', ''),
         ]);
     }
@@ -177,7 +177,7 @@ class MusicController extends Controller
         );
 
         return Inertia::render('Music/Show', [
-            'music' => new MusicResource($music),
+            'music' => (new MusicResource($music))->resolve(),
             'transposed' => $transposed,
             'chords' => $this->musicService->getChords($music),
             'currentKey' => $request->input('to_key'),

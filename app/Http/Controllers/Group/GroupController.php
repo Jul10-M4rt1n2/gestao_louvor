@@ -77,9 +77,25 @@ class GroupController extends Controller
         $groupData = $this->groupService->find($group->id, $request->user()->organization_id);
         $members = $this->groupService->getMembers($group);
 
+        // Get available users from the organization who are not in the group
+        $memberIds = collect($members)->pluck('id')->toArray();
+        $availableUsers = \App\Models\User::where('organization_id', $request->user()->organization_id)
+            ->where('active', true)
+            ->whereNotIn('id', $memberIds)
+            ->orderBy('name')
+            ->get(['id', 'name', 'email']);
+
+        // Get available functions from the ministry
+        $functions = \App\Models\MinistryFunction::where('organization_id', $request->user()->organization_id)
+            ->where('active', true)
+            ->orderBy('name')
+            ->get(['id', 'name', 'icon']);
+
         return Inertia::render('Group/Show', [
             'group' => (new GroupResource($groupData))->resolve(),
             'members' => $members,
+            'availableUsers' => $availableUsers,
+            'functions' => $functions,
         ]);
     }
 

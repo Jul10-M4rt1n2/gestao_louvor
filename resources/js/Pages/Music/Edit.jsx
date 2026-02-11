@@ -1,4 +1,4 @@
-import { Head, useForm, Link } from '@inertiajs/react';
+import { Head, useForm, Link, router } from '@inertiajs/react';
 import { useState } from 'react';
 import AppLayout from '@/Layouts/AppLayout';
 
@@ -42,9 +42,11 @@ export default function Edit({ auth, music, keys, errors: serverErrors }) {
     };
 
     const handleDelete = () => {
-        if (confirm('Tem certeza que deseja excluir esta música?')) {
-            useForm().delete(route('music.destroy', music.id));
-        }
+        router.delete(route('music.destroy', music.id), {
+            onSuccess: () => {
+                // Redirect handled by controller
+            },
+        });
         setShowDeleteConfirm(false);
     };
 

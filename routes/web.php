@@ -36,6 +36,7 @@ Route::middleware('auth')->group(function () {
     Route::resource('music', MusicController::class);
     Route::get('/music/search', [MusicController::class, 'search'])->name('music.search');
     Route::post('/music/{music}/transpose', [MusicController::class, 'transpose'])->name('music.transpose');
+    Route::post('/music/{music}/transpose-json', [MusicController::class, 'transposeJson'])->name('music.transpose.json');
 
     // Group routes
     Route::resource('groups', GroupController::class);
@@ -49,6 +50,7 @@ Route::middleware('auth')->group(function () {
     Route::post('/scales/{schedule}/music', [ScaleController::class, 'addMusic'])->name('scales.music.add');
     Route::put('/scales/{schedule}/music/{scheduleMusic}', [ScaleController::class, 'updateMusic'])->name('scales.music.update');
     Route::delete('/scales/{schedule}/music/{scheduleMusic}', [ScaleController::class, 'removeMusic'])->name('scales.music.remove');
+    Route::post('/scales/{schedule}/music/{scheduleMusic}/reorder', [ScaleController::class, 'reorderMusic'])->name('scales.music.reorder');
     Route::post('/scales/{schedule}/participants', [ScaleController::class, 'addParticipant'])->name('scales.participants.add');
     Route::put('/scales/{schedule}/participants/{participant}', [ScaleController::class, 'updateParticipant'])->name('scales.participants.update');
     Route::delete('/scales/{schedule}/participants/{participant}', [ScaleController::class, 'removeParticipant'])->name('scales.participants.remove');

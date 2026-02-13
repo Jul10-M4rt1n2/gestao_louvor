@@ -102,7 +102,7 @@ class ScaleController extends Controller
 
         // Músicas da escala no formato que o frontend espera
         $scheduleMusics = ScheduleMusic::where('schedule_id', $schedule->id)
-            ->with('music:id,title,artist,original_key')
+            ->with('music:id,title,artist,original_key,lyrics,chords_text')
             ->orderBy('order')
             ->get();
 
@@ -139,12 +139,18 @@ class ScaleController extends Controller
             ->orderBy('name')
             ->get(['id', 'name', 'email']);
 
+        $availableFunctions = \App\Models\MinistryFunction::where('organization_id', $request->user()->organization_id)
+            ->where('active', true)
+            ->orderBy('name')
+            ->get(['id', 'name', 'category']);
+
         return Inertia::render('Scale/Show', [
             'schedule' => (new ScaleResource($schedule))->resolve(),
             'scheduleMusics' => $scheduleMusics,
             'participants' => $participants,
             'availableMusics' => $availableMusics,
             'availableUsers' => $availableUsers,
+            'availableFunctions' => $availableFunctions,
         ]);
     }
 
@@ -286,6 +292,42 @@ class ScaleController extends Controller
     }
 
     /**
+     * Reorder a music in the schedule (move up or down).
+     */
+    public function reorderMusic(Request $request, Schedule $schedule, ScheduleMusic $scheduleMusic): RedirectResponse
+    {
+        $this->authorize('update', $schedule);
+
+        $direction = $request->input('direction'); // 'up' or 'down'
+
+        $allMusics = ScheduleMusic::where('schedule_id', $schedule->id)
+            ->orderBy('order')
+            ->get();
+
+        $currentIndex = $allMusics->search(fn($m) => $m->id === $scheduleMusic->id);
+
+        if ($currentIndex === false) {
+            return redirect()->route('scales.show', $schedule);
+        }
+
+        $swapIndex = $direction === 'up' ? $currentIndex - 1 : $currentIndex + 1;
+
+        if ($swapIndex < 0 || $swapIndex >= $allMusics->count()) {
+            return redirect()->route('scales.show', $schedule);
+        }
+
+        $currentOrder = $allMusics[$currentIndex]->order;
+        $swapOrder = $allMusics[$swapIndex]->order;
+
+        $allMusics[$currentIndex]->update(['order' => $swapOrder]);
+        $allMusics[$swapIndex]->update(['order' => $currentOrder]);
+
+        return redirect()
+            ->route('scales.show', $schedule)
+            ->with('success', 'Ordem das músicas atualizada!');
+    }
+
+    /**
      * Add participant to schedule.
      */
     public function addParticipant(Request $request, Schedule $schedule): RedirectResponse
@@ -295,13 +337,13 @@ class ScaleController extends Controller
         $request->validate([
             'user_id' => 'required|exists:users,id',
             'function_id' => 'nullable|exists:ministry_functions,id',
-            'status' => 'nullable|in:convidado,confirmado,recusado',
+            'status' => 'nullable|in:convidado,confirmado,rejeitado,ausente',
             'notes' => 'nullable|string',
         ], [
             'user_id.required' => 'O participante é obrigatório.',
             'user_id.exists' => 'O participante selecionado não existe.',
             'function_id.exists' => 'A função selecionada não existe.',
-            'status.in' => 'O status deve ser: convidado, confirmado ou recusado.',
+            'status.in' => 'O status deve ser: convidado, confirmado, rejeitado ou ausente.',
         ]);
 
         $this->scaleService->addParticipant(
@@ -326,11 +368,11 @@ class ScaleController extends Controller
 
         $request->validate([
             'function_id' => 'nullable|exists:ministry_functions,id',
-            'status' => 'nullable|in:convidado,confirmado,recusado',
+            'status' => 'nullable|in:convidado,confirmado,rejeitado,ausente',
             'notes' => 'nullable|string',
         ], [
             'function_id.exists' => 'A função selecionada não existe.',
-            'status.in' => 'O status deve ser: convidado, confirmado ou recusado.',
+            'status.in' => 'O status deve ser: convidado, confirmado, rejeitado ou ausente.',
         ]);
 
         $this->scaleService->updateParticipant($participant, $request->only(['function_id', 'status', 'notes']));

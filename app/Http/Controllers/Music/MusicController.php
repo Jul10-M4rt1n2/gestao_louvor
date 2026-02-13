@@ -8,6 +8,7 @@ use App\Http\Requests\Music\UpdateMusicRequest;
 use App\Http\Resources\MusicResource;
 use App\Models\Music;
 use App\Services\Music\MusicService;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
@@ -181,6 +182,32 @@ class MusicController extends Controller
             'transposed' => $transposed,
             'chords' => $this->musicService->getChords($music),
             'currentKey' => $request->input('to_key'),
+        ]);
+    }
+
+    /**
+     * Transpose a music to a different key (JSON response for presentation).
+     */
+    public function transposeJson(Request $request, Music $music): JsonResponse
+    {
+        $this->authorize('view', $music);
+
+        $request->validate([
+            'from_key' => 'required|string',
+            'to_key' => 'required|string',
+        ]);
+
+        $transposed = $this->musicService->transpose(
+            $music,
+            $request->input('from_key'),
+            $request->input('to_key')
+        );
+
+        return response()->json([
+            'lyrics' => $transposed['lyrics'] ?? null,
+            'chords_text' => $transposed['chords_text'] ?? null,
+            'original_key' => $transposed['original_key'] ?? null,
+            'transposed_key' => $transposed['transposed_key'] ?? null,
         ]);
     }
 }

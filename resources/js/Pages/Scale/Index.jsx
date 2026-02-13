@@ -11,12 +11,12 @@ export default function Index({ schedules, groups, filters }) {
 
     const handleSearch = (e) => {
         e.preventDefault();
-        router.get('/scales', { 
-            search, 
-            status, 
-            group_id: groupId, 
-            start_date: dateFrom, 
-            end_date: dateTo 
+        router.get('/scales', {
+            search,
+            status,
+            group_id: groupId,
+            start_date: dateFrom,
+            end_date: dateTo
         }, { preserveState: true });
     };
 
@@ -287,7 +287,7 @@ export default function Index({ schedules, groups, filters }) {
                                         href={link.url || '#'}
                                         className={`relative inline-flex items-center px-4 py-2 border text-sm font-medium ${
                                             link.active
-                                                ? 'z-10 bg-indigo-50 border-indigo-500 text-indigo-600'
+                                                ? 'z-50 bg-indigo-50 border-indigo-500 text-indigo-600'
                                                 : 'bg-white border-gray-300 text-gray-500 hover:bg-gray-50'
                                         } ${!link.url ? 'cursor-not-allowed opacity-50' : ''}`}
                                         dangerouslySetInnerHTML={{ __html: link.label }}

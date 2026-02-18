@@ -23,6 +23,75 @@ export default function Show({ schedule, scheduleMusics, participants, available
     ));
     const [transposedMap, setTransposedMap] = useState({});
 
+    // ========== FORMS (useForm) ==========
+    const { data: musicData, setData: setMusicData, post: postMusic, processing: processingMusic, reset: resetMusic } = useForm({
+        music_id: '',
+        custom_key: '',
+        notes: '',
+    });
+
+    const { data: participantData, setData: setParticipantData, post: postParticipant, processing: processingParticipant, reset: resetParticipant } = useForm({
+        user_id: '',
+        function_id: '',
+        status: 'convidado',
+    });
+
+    // ========== FUNÇÕES DE AÇÃO ==========
+
+    const handleDelete = () => {
+        router.delete(`/scales/${schedule.id}`, {
+            onSuccess: () => {
+                setShowDeleteModal(false);
+            },
+        });
+    };
+
+    const handleAddMusic = (e) => {
+        e.preventDefault();
+        postMusic(`/scales/${schedule.id}/music`, {
+            onSuccess: () => {
+                setShowAddMusicModal(false);
+                resetMusic();
+            },
+        });
+    };
+
+    const handleRemoveMusic = (scheduleMusicId) => {
+        if (confirm('Tem certeza que deseja remover esta música da escala?')) {
+            router.delete(`/scales/${schedule.id}/music/${scheduleMusicId}`);
+        }
+    };
+
+    const handleReorderMusic = (scheduleMusicId, direction) => {
+        router.post(`/scales/${schedule.id}/music/${scheduleMusicId}/reorder`, {
+            direction,
+        });
+    };
+
+    const handleAddParticipant = (e) => {
+        e.preventDefault();
+        postParticipant(`/scales/${schedule.id}/participants`, {
+            onSuccess: () => {
+                setShowAddParticipantModal(false);
+                resetParticipant();
+            },
+        });
+    };
+
+    const handleRemoveParticipant = (participantId) => {
+        if (confirm('Tem certeza que deseja remover este participante?')) {
+            router.delete(`/scales/${schedule.id}/participants/${participantId}`);
+        }
+    };
+
+    const handleUpdateParticipantStatus = (participantId, newStatus) => {
+        router.put(`/scales/${schedule.id}/participants/${participantId}`, {
+            status: newStatus,
+        });
+    };
+
+    // ========== TRANSPOSIÇÃO / APRESENTAÇÃO ==========
+
     const getCsrfToken = () => document.querySelector('meta[name="csrf-token"]')?.content;
 
     const fetchTransposed = async (scheduleMusic, toKey) => {
@@ -107,6 +176,8 @@ export default function Show({ schedule, scheduleMusics, participants, available
         }
         fetchTransposed(current, desiredKey);
     }, [presentationOpen, presentationIndex, presentationKeys, transposedMap, scheduleMusics]);
+
+    // ========== HELPERS ==========
 
     const getDisplayedText = (scheduleMusic) => {
         const transposed = transposedMap[scheduleMusic.id];
@@ -352,7 +423,7 @@ export default function Show({ schedule, scheduleMusics, participants, available
                                 ) : (
                                     <div className="text-center py-8">
                                         <svg className="mx-auto h-12 w-12 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19V6l12-3v13M9 19c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zm12-3c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zM9 10l12-3" />
+                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19V6l12-3v13M9 19c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zM9 10l12-3" />
                                         </svg>
                                         <p className="mt-2 text-sm text-gray-500">
                                             Nenhuma música adicionada ainda.

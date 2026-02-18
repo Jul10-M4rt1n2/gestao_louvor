@@ -2,35 +2,72 @@ import { Head, Link, router, useForm } from '@inertiajs/react';
 import { useState } from 'react';
 import AppLayout from '@/Layouts/AppLayout';
 
-export default function Show({ group, members, availableUsers, functions }) {
+export default function Show({ schedule, scheduleMusics, participants, availableMusics, availableUsers, availableFunctions }) {
     const [showDeleteModal, setShowDeleteModal] = useState(false);
-    const [showAddMemberModal, setShowAddMemberModal] = useState(false);
+    const [showAddMusicModal, setShowAddMusicModal] = useState(false);
+    const [showAddParticipantModal, setShowAddParticipantModal] = useState(false);
 
-    const { data, setData, post, processing, errors, reset } = useForm({
-        user_id: '',
-        function_ids: [],
+    const keyOptions = [
+        'C', 'C#', 'D', 'D#', 'E', 'F', 'F#', 'G', 'G#', 'A', 'A#', 'B',
+        'Cm', 'Dm', 'Em', 'Fm', 'Gm', 'Am', 'Bm',
+    ];
+
+    const [presentationOpen, setPresentationOpen] = useState(false);
+    const [presentationIndex, setPresentationIndex] = useState(0);
+    const [presentationColumns, setPresentationColumns] = useState(2);
+    const [presentationKeys, setPresentationKeys] = useState(() => (
+        scheduleMusics.reduce((acc, scheduleMusic) => {
+            acc[scheduleMusic.id] = scheduleMusic.custom_key || scheduleMusic.music?.original_key || '';
+            return acc;
+        }, {})
+    ));
+    const [transposedMap, setTransposedMap] = useState({});
+
+    // --- Forms para adicionar música e participante ---
+    const { data: musicData, setData: setMusicData, post: postMusic, processing: processingMusic, reset: resetMusic } = useForm({
+        music_id: '',
+        custom_key: '',
+        notes: '',
     });
 
+    const { data: participantData, setData: setParticipantData, post: postParticipant, processing: processingParticipant, reset: resetParticipant } = useForm({
+        user_id: '',
+        function_id: '',
+        status: 'convidado',
+    });
+
+    // --- Funções de ação ---
+
     const handleDelete = () => {
-        router.delete(`/groups/${group.id}`, {
+        router.delete(`/scales/${schedule.id}`, {
             onSuccess: () => {
                 setShowDeleteModal(false);
             },
         });
     };
 
-    const handleDeleteMember = (userId) => {
-        if (confirm('Tem certeza que deseja remover este membro do grupo?')) {
+    const handleAddMusic = (e) => {
+        e.preventDefault();
+        postMusic(`/scales/${schedule.id}/music`, {
+            onSuccess: () => {
+                setShowAddMusicModal(false);
+                resetMusic();
+            },
+        });
+    };
+
+    const handleRemoveMusic = (scheduleMusicId) => {
+        if (confirm('Tem certeza que deseja remover esta música do grupo?')) {
             router.delete(`/groups/${group.id}/members/${userId}`);
         }
     };
 
-    const handleAddMember = (e) => {
+    const handleAddParticipant = (e) => {
         e.preventDefault();
-        post(`/groups/${group.id}/members`, {
+        postParticipant(`/groups/${group.id}/members`, {
             onSuccess: () => {
-                setShowAddMemberModal(false);
-                reset();
+                setShowAddParticipantModal(false);
+                resetParticipant();
             },
         });
     };

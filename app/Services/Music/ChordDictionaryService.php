@@ -14,7 +14,7 @@ class ChordDictionaryService
     /**
      * Get chords with optional filters.
      */
-    public function getChords(string $search = '', string $key = '', string $type = ''): array
+    public function getChords(?string $search = null, ?string $key = null, ?string $type = null): array
     {
         $chords = $this->chords;
 

@@ -18,7 +18,10 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
-        //
+        // Register ChordDictionaryService as singleton
+        $this->app->singleton(
+            \App\Services\Music\ChordDictionaryService::class
+        );
     }
 
     /**

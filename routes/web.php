@@ -3,7 +3,9 @@
 use App\Http\Controllers\Auth\AuthController;
 use App\Http\Controllers\Group\GroupController;
 use App\Http\Controllers\Group\MemberController;
+use App\Http\Controllers\Music\ChordDictionaryController;
 use App\Http\Controllers\Music\MusicController;
+use App\Http\Controllers\Music\TunerController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\Scale\ScaleController;
 use Illuminate\Support\Facades\Route;
@@ -37,6 +39,13 @@ Route::middleware('auth')->group(function () {
     Route::get('/music/search', [MusicController::class, 'search'])->name('music.search');
     Route::post('/music/{music}/transpose', [MusicController::class, 'transpose'])->name('music.transpose');
     Route::post('/music/{music}/transpose-json', [MusicController::class, 'transposeJson'])->name('music.transpose.json');
+
+    // Tuner
+    Route::get('/tuner', [TunerController::class, 'index'])->name('tuner.index');
+
+    // Chord Dictionary
+    Route::get('/chords', [ChordDictionaryController::class, 'index'])->name('chords.index');
+    Route::get('/chords/{name}', [ChordDictionaryController::class, 'show'])->name('chords.show');
 
     // Group routes
     Route::resource('groups', GroupController::class);

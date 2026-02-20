@@ -4,11 +4,11 @@ namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Foundation\Auth\User as Authenticatable;
-use Illuminate\Notifications\Notifiable;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Foundation\Auth\User as Authenticatable;
+use Illuminate\Notifications\Notifiable;
 
 class User extends Authenticatable
 {
@@ -27,7 +27,7 @@ class User extends Authenticatable
         'phone',
         'profile_image',
         'active',
-        'organization_id'
+        'organization_id',
     ];
 
     /**
@@ -96,5 +96,17 @@ class User extends Authenticatable
     public function pendingSchedules(): HasMany
     {
         return $this->scheduleParticipations()->pending();
+    }
+
+    public function roles(): BelongsToMany
+    {
+        return $this->belongsToMany(Role::class, 'user_roles')
+            ->withPivot('organization_id')
+            ->withTimestamps();
+    }
+
+    public function createdMusics(): HasMany
+    {
+        return $this->hasMany(Music::class, 'created_by');
     }
 }

@@ -22,7 +22,7 @@ return new class extends Migration
             $table->foreignId('ministry_id')->constrained()->cascadeOnDelete();
             $table->foreignId('organization_id')->constrained()->cascadeOnDelete();
             $table->timestamps();
-            
+
             // Índices para performance
             $table->index(['ministry_id', 'active']);
             $table->index(['organization_id', 'active']);

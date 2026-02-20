@@ -2,9 +2,9 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class Organization extends Model
 {
@@ -34,5 +34,15 @@ class Organization extends Model
     public function schedules(): HasMany
     {
         return $this->hasMany(Schedule::class);
+    }
+
+    public function musics(): HasMany
+    {
+        return $this->hasMany(Music::class);
+    }
+
+    public function chatMessages(): HasMany
+    {
+        return $this->hasMany(ChatMessage::class);
     }
 }

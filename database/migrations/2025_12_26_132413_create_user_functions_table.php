@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->foreignId('user_id')->constrained()->cascadeOnDelete();
             $table->foreignId('group_id')->constrained()->cascadeOnDelete();
-            $table->foreignId('function_id')->constrained()->cascadeOnDelete();
+            $table->foreignId('function_id')->constrained('ministry_functions')->cascadeOnDelete();
             $table->boolean('active')->default(true);
             $table->timestamps();
 

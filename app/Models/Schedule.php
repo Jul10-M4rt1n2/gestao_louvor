@@ -2,10 +2,11 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class Schedule extends Model
 {
@@ -20,13 +21,13 @@ class Schedule extends Model
         'location',
         'status',
         'group_id',
-        'organization_id'
+        'organization_id',
     ];
 
     protected $casts = [
         'scheduled_at' => 'datetime',
         'duration' => 'datetime:H:i:s',
-        'confirmed_at' => 'datetime'
+        'confirmed_at' => 'datetime',
     ];
 
     // Relacionamentos
@@ -48,5 +49,13 @@ class Schedule extends Model
     public function confirmedParticipants(): HasMany
     {
         return $this->participants()->where('status', 'confirmado');
+    }
+
+    public function musics(): BelongsToMany
+    {
+        return $this->belongsToMany(Music::class, 'schedule_musics')
+            ->withPivot('custom_key', 'order', 'notes')
+            ->withTimestamps()
+            ->orderBy('schedule_musics.order');
     }
 }

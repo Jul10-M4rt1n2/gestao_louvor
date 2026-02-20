@@ -2,11 +2,11 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class Group extends Model
 {
@@ -18,16 +18,22 @@ class Group extends Model
         'schedule_frequency',
         'active',
         'ministry_id',
+        'organization_id',
     ];
 
     protected $casts = [
         'active' => 'boolean',
-        'meeting_days' => 'json'
+        'meeting_days' => 'json',
     ];
 
     public function ministry(): BelongsTo
     {
         return $this->belongsTo(Ministry::class);
+    }
+
+    public function organization(): BelongsTo
+    {
+        return $this->belongsTo(Organization::class);
     }
 
     public function users(): BelongsToMany
@@ -47,5 +53,10 @@ class Group extends Model
     public function schedules(): HasMany
     {
         return $this->hasMany(Schedule::class);
+    }
+
+    public function chatMessages(): HasMany
+    {
+        return $this->hasMany(ChatMessage::class);
     }
 }

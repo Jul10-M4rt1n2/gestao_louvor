@@ -21,7 +21,7 @@ return new class extends Migration
             $table->boolean('active')->default(true);
             $table->foreignId('organization_id')->constrained()->cascadeOnDelete();
             $table->timestamps();
-            
+
             // Índices para performance
             $table->index(['organization_id', 'active']);
             $table->index(['category', 'active']);

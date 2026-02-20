@@ -2,6 +2,13 @@
 
 namespace App\Providers;
 
+use App\Models\Group;
+use App\Models\Music;
+use App\Models\Schedule;
+use App\Policies\GroupPolicy;
+use App\Policies\MusicPolicy;
+use App\Policies\ScalePolicy;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
@@ -11,7 +18,10 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
-        //
+        // Register ChordDictionaryService as singleton
+        $this->app->singleton(
+            \App\Services\Music\ChordDictionaryService::class
+        );
     }
 
     /**
@@ -19,6 +29,9 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        //
+        // Register policies
+        Gate::policy(Music::class, MusicPolicy::class);
+        Gate::policy(Group::class, GroupPolicy::class);
+        Gate::policy(Schedule::class, ScalePolicy::class);
     }
 }
